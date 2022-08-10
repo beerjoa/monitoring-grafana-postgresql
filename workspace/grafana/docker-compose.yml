@@ -1,0 +1,103 @@
+version: '3.8'
+
+networks:
+  default:
+    name: "${NETWORK_GRAFANA}"
+    external: true
+
+volumes:
+  grafana_data:
+    external: 
+      name: ${VOLUME_GRAFANA_DATA}
+  grafana_provisioning:
+    external: 
+      name: ${VOLUME_GRAFANA_PROVISIONING}
+  postgresql_data_grafana:
+    external: 
+      name: ${VOLUME_POSTGRESQL_DATA}
+
+services:
+  # grafana
+  grafana:
+    container_name: grafana
+    image: "grafana/grafana:${IMAGE_GRAFANA}"
+    environment:
+      - GF_SERVER_ROOT_URL=http://0.0.0.0:3000
+      - GF_RENDERING_SERVER_URL=http://renderer:8081/render
+      - GF_RENDERING_CALLBACK_URL=http://grafana:3000/
+    ports:
+      - 3000:3000
+    volumes:
+      - "${DEFAULT_CONTAINER_VOLUME_PATH}/grafana/config/grafana.ini:/etc/grafana/grafana.ini"
+      - "grafana_data:/var/lib/grafana"
+      - "grafana_provisioning:/etc/grafana/provisioning/"
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    healthcheck:
+      test: ["CMD", "wget", "-nv", "-t1", "--spider", "http://grafana:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
+    restart: unless-stopped
+
+  # grafana image renderer
+  renderer:
+    container_name: renderer
+    image: "grafana/grafana-image-renderer:${IMAGE_GRAFANA_IMAGE_RENDERER}"
+    depends_on:
+      - grafana
+    environment:
+      - ENABLE_METRICS=true
+      - LOG_LEVEL=debug
+      - RENDERING_VERBOSE_LOGGING=true
+      - RENDERING_DUMPIO=true
+      - RENDERING_MODE=reusable
+    ports:
+      - 8081:8081
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    healthcheck:
+      test: ["CMD", "wget", "-nv", "-t1", "--spider", "http://renderer:8081"]
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
+    restart: unless-stopped
+
+  # Database
+  postgresql:
+    container_name: postgresql
+    image: "postgres:${IMAGE_POSTGRESQL}"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_HOST=127.0.0.1
+    volumes:
+      - "${DEFAULT_CONTAINER_VOLUME_PATH}/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "postgresql_data_grafana:/var/lib/postgresql/data"
+    ports:
+      - "55432:5432"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "10"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
+    restart: unless-stopped
