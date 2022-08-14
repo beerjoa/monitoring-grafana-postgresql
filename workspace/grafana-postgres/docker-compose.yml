@@ -88,7 +88,7 @@ services:
       - "${DEFAULT_CONTAINER_VOLUME_PATH}/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql"
       - "postgresql_data_grafana:/var/lib/postgresql/data"
     ports:
-      - "55432:5432"
+      - "5432:5432"
     logging:
       driver: "json-file"
       options:

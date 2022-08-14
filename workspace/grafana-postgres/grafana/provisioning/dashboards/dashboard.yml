@@ -1,6 +1,6 @@
 apiVersion: 1
 providers:
-  - name: TIG-DB
+  - name: TICK-DB
     folder: ''
     type: file
     disableDeletion: false

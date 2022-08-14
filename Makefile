@@ -21,9 +21,9 @@ create_dir:
 # Copy configure file
 copy_conf:
 	@echo "$(ccso)--> Copy configure file $(ccend)"
-	@cp ./workspace/grafana/grafana/config/grafana.ini "${DEFAULT_CONTAINER_VOLUME_PATH}/grafana/config/"
-	@cp -r ./workspace/grafana/grafana/provisioning/* "${DEFAULT_CONTAINER_VOLUME_PATH}/grafana/provisioning/"
-	@cp ./workspace/grafana/postgresql/init.sql "${DEFAULT_CONTAINER_VOLUME_PATH}/postgresql/"
+	@cp ./workspace/grafana-postgres/grafana/config/grafana.ini "${DEFAULT_CONTAINER_VOLUME_PATH}/grafana/config/"
+	@cp -r ./workspace/grafana-postgres/grafana/provisioning/* "${DEFAULT_CONTAINER_VOLUME_PATH}/grafana/provisioning/"
+	@cp ./workspace/grafana-postgres/postgresql/init.sql "${DEFAULT_CONTAINER_VOLUME_PATH}/postgresql/"
 
 
 # Create docker volume & network
@@ -38,12 +38,12 @@ create_docker_things:
 set_directory:
 	@echo "$(ccso)--> Set directory $(ccend)"
 	@chown -R "${USER}:" "${DEFAULT_CONTAINER_VOLUME_PATH}"
-	@hmod -R 755 "${DEFAULT_CONTAINER_VOLUME_PATH}"
+	@chmod -R 755 "${DEFAULT_CONTAINER_VOLUME_PATH}"
 
 # Clean grafana project
 clean:
 	@echo "$(ccso)--> Removing virtual environment $(ccend)"
-	@docker compose --env-file ./.env -f ./workspace/grafana/docker-compose.yml down --remove-orphans
+	@docker compose --env-file ./.env -f ./workspace/grafana-postgres/docker-compose.yml down --remove-orphans
 	@rm -rf ${DEFAULT_CONTAINER_VOLUME_PATH}
 	@docker volume rm -f ${VOLUME_GRAFANA_DATA} ${VOLUME_GRAFANA_PROVISIONING} ${VOLUME_POSTGRESQL_DATA}
 	@docker network rm ${NETWORK_GRAFANA}
@@ -61,7 +61,7 @@ build:
 run:
 	@echo ""
 	@echo "$(ccso)--> Run docker compose $(ccend)"
-	@docker compose --env-file ./.env -f ./workspace/grafana/docker-compose.yml up
+	@docker compose --env-file ./.env -f ./workspace/grafana-postgres/docker-compose.yml up
 
 # Test
 test:

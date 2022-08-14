@@ -2,7 +2,13 @@
 
 [![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fbeerjoa%2Fmonitoring-grafana-postgresql&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
 
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+![Grafana](https://img.shields.io/badge/grafana-%23F46800.svg?style=for-the-badge&logo=grafana&logoColor=white)
+![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+
 This repository can build a Grafana service easily and quickly using Docker.
+
+![grafana](images/grafana.png)
 
 ## Features
 * [Grafana](https://grafana.com/docs/)
@@ -45,12 +51,12 @@ $ make run
 If you want to change `run` command, fix it in Makefile.
 ```bash
 # fix `run` in Makefile.
-# @docker compose --env-file ./.env -f ./workspace/grafana/docker-compose.yml up [SERVICE...]
+# @docker compose --env-file ./.env -f ./workspace/grafana-postgres/docker-compose.yml up [SERVICE...]
 $ make run
 ``` 
 
 ## Configuraion
-* .env: related to `Makefile` and `workspace/grafana/docker-compose.yml`
+* .env: related to `Makefile` and `workspace/grafana-postgres/docker-compose.yml`
 ```bash
 # .env
 
@@ -71,7 +77,7 @@ IMAGE_GRAFANA_IMAGE_RENDERER=3.4.1
 IMAGE_POSTGRESQL=12.2-alpine
 ```
 
-If you want to know about `Grafana` and `PosgreSQL` configuraion , [here](https://github.com/beerjoa/monitoring-grafana-postgresql/blob/main/workspace/grafana/README.md)
+If you want to know about `Grafana` and `PosgreSQL` configuraion , [here](workspace/grafana-postgres/README.md)
 
 ## Structure
 ```bash
@@ -87,3 +93,7 @@ If you want to know about `Grafana` and `PosgreSQL` configuraion , [here](https:
          ├── postgresql             # postgresql init directory
          └── grafana                # grafana init directory
 ```
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.

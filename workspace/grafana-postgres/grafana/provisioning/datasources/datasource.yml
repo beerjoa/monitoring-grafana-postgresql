@@ -1,11 +1,11 @@
 apiVersion: 1
 datasources:
-  - name: TIG-DB
+  - name: TICK-DB
     type: influxdb
     access: proxy
     database: telegraf
-    user: telegraf
-    password: p#ssw0rd
-    url: http://127.0.0.1:48086
+    user: admin
+    password: admin
+    url: http://0.0.0.0:8086
     isDefault: true
     editable: true
